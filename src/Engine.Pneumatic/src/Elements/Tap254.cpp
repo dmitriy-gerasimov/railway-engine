@@ -1,8 +1,5 @@
 ﻿#include "Tap254.h"
 
-#include <cmath>
-#include <exception>
-
 double const Tap254::EPSILON = 0.000'001;
 
 double const Tap254::V_NP = 0.0001;
@@ -57,7 +54,7 @@ void Tap254::update(double a_deltaSeconds, double a_pmPressure, double a_mvtPres
 		pressureOnPiston = pdk;
 
 	a_im_np = m_isIMTapOpened;
-	if (pvp + 0.1 /*0.6*/ >= pnp)
+	if (pvp + 0.1 >= pnp)
 		a_im_vp = m_isIMTapOpened;
 	else
 		a_im_vp = 0;
@@ -160,8 +157,6 @@ void Tap254::dpNP(double a_deltaSeconds)
 	pnp = pnp0 + (
 		a_im_np / r_im_np * (imPressure - pnp0)
 	) * a_deltaSeconds / V_NP;
-
-	checkPressure(pnp);
 }
 
 void Tap254::dpVP(double a_deltaSeconds)
@@ -171,8 +166,6 @@ void Tap254::dpVP(double a_deltaSeconds)
 		+ a_vp_dk / r_vp_dk * (pdk0 - pvp0)
 		- a_vp_atm / r_vp_atm * pvp0
 	) * a_deltaSeconds / V_VP;
-
-	checkPressure(pvp);
 }
 
 void Tap254::dpDK(double a_deltaSeconds)
@@ -180,12 +173,4 @@ void Tap254::dpDK(double a_deltaSeconds)
 	pdk = pdk0 + (
 		a_vp_dk / r_vp_dk * (pvp0 - pdk0)
 	) * a_deltaSeconds / V_DK;
-
-	checkPressure(pdk);
-}
-
-auto Tap254::checkPressure(double a_pressure) const -> void
-{
-	if (std::isnan(a_pressure) || a_pressure > 10.0 || a_pressure < -EPSILON)
-		throw std::exception();
 }

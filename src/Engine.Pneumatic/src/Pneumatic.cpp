@@ -5,7 +5,6 @@
 Pneumatic::Pneumatic()
 	: frontPneumaticConnector(this)
 	, backPneumaticConnector(this)
-	, vrValveIsOpened(true)
 {
 }
 

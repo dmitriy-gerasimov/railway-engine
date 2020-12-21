@@ -3,7 +3,6 @@
 #include "PneumaticConnector.h"
 
 #include <cmath>
-#include <exception>
 
 double const LocomotivePneumatics::EPSILON = 0.000'001;
 
@@ -126,7 +125,7 @@ auto LocomotivePneumatics::getBrakeForce() const -> double
 		* (1003.0 * velocityKmpH + 19000.0) / (3217.0 * velocityKmpH + 760.0)
 		/ 25.0;
 
-	double const sandSupplyFactor = 1.0; // (m_owner->getElectrics().SandSupply() == 0) ? 1.0 : sandSupplyFactor;
+	double const sandSupplyFactor = 1.0;
 
 	double force = brakeForceFactor * sandSupplyFactor * k * ptc;
 
@@ -245,8 +244,6 @@ void LocomotivePneumatics::dpGR(double a_deltaSeconds)
 		compressorFlow	
 		+ a_gr_pm / r_gr_pm * (ppm0 - pgr0)
 	) * a_deltaSeconds / Vgr;
-
-	checkPressure(pgr);
 }
 
 void LocomotivePneumatics::dpPM(double a_deltaSeconds)
@@ -258,8 +255,6 @@ void LocomotivePneumatics::dpPM(double a_deltaSeconds)
 		+ tap254.a_pm_mvt / tap254.r_pm_mvt * (pmvt0 - ppm0)
 		+ epk150.a_pm_kvv / epk150.r_pm_kvv * (epk150.getKvvPressure() - ppm0)
 	) * a_deltaSeconds / Vpm;
-
-	checkPressure(ppm);
 }
 
 void LocomotivePneumatics::dpTM(double a_deltaSeconds)
@@ -292,8 +287,6 @@ void LocomotivePneumatics::dpTM(double a_deltaSeconds)
 
 	if (ptm < 0.0)
 		ptm = 0.0;
-
-	checkPressure(ptm);
 }
 
 void LocomotivePneumatics::dpTC(double a_deltaSeconds)
@@ -301,8 +294,6 @@ void LocomotivePneumatics::dpTC(double a_deltaSeconds)
 	ptc = ptc0 + (
 		a_mvt_tc / r_mvt_tc * (pmvt0 - ptc0)
 	) * a_deltaSeconds / Vtc;
-
-	checkPressure(ptc);
 }
 
 void LocomotivePneumatics::dpIM(double a_deltaSeconds)
@@ -317,8 +308,6 @@ void LocomotivePneumatics::dpIM(double a_deltaSeconds)
 
 	if (pim <= 0.0)
 		pim = 0.0;
-
-	checkPressure(pim);
 }
 
 void LocomotivePneumatics::dpMVT(double a_deltaSeconds)
@@ -328,12 +317,4 @@ void LocomotivePneumatics::dpMVT(double a_deltaSeconds)
 		+ a_mvt_tc / r_mvt_tc * (ptc0 - pmvt0)
 		- tap254.a_mvt_atm / tap254.r_mvt_atm * pmvt0
 		) * a_deltaSeconds / Vmvt;
-
-	checkPressure(pmvt);
-}
-
-auto LocomotivePneumatics::checkPressure(double /*a_pressure*/) const -> void
-{
-	/*if (std::isnan(a_pressure) || a_pressure > 11.0 || a_pressure < -EPSILON)
-		throw std::exception();*/
 }

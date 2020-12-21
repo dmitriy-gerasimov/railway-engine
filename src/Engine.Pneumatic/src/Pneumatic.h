@@ -46,9 +46,9 @@ public:
 	virtual auto setDefaultPneumaticValues() -> void = 0;
 	
 private:
+	// передний пневматический соединитель
 	PneumaticConnector frontPneumaticConnector;
 
+	// задний пневматический соединитель
 	PneumaticConnector backPneumaticConnector;
-
-	bool vrValveIsOpened;
 };

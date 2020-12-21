@@ -18,7 +18,7 @@ public:
 
 	LocomotivePneumatics();
 
-	virtual ~LocomotivePneumatics();
+	~LocomotivePneumatics() override;
 
 	auto update(double a_deltaSeconds) -> void override;
 
@@ -83,16 +83,29 @@ private:
 
 	void dpTC(double a_deltaSeconds);
 
-	void checkPressure(double a_pressure) const;
-
+	// главный резервуар
 	double Vgr,  pgr,  pgr0;
+	// питательная магистраль
 	double Vpm,  ppm,  ppm0;
+	// тормозная магистраль
 	double Vtm,  ptm,  ptm0;
+	// импульсная магистраль
 	double Vim,  pim,  pim0;
+	// магистраль вспомогательного тормоза
 	double Vmvt, pmvt, pmvt0;
+	// тормозной цилиндр
 	double Vtc,  ptc,  ptc0;
 
+	// переменные с названиями вида a_x_y: 1 - если открыто соединение  между резервуарами x и y, иначе - 0
+	// gr - главный резервуар
+	// pm - питательная магистраль
+	// tm - тормозная магистраль
+	// atm - атмосфера
+	// mvt - магистраль вспомогательного тормоза
+	// tc -  тормозной цилиндр
 	int		a_gr_pm, a_tm_atm_leak, a_mvt_tc;
+
+	// переменные с названиями вида r_x_y: коэффициент, влияющий на скорость перетекания воздуха между резервуарами x и y
 	double	r_gr_pm, r_tm_atm_leak, r_mvt_tc;
 
 	Tap254 tap254;
@@ -102,15 +115,19 @@ private:
 	VR483 vr483;
 
 	EPK150 epk150;
-	
+
+	// скорость, м/с
 	double velocity;
 
-	// коэффициент для изменения силы торможения
+	// коэффициент для корректировки силы торможения
 	double brakeForceFactor;
 
+	// коэффициент, определяющий производительность компрессора
 	double compressorProductivity;
 
+	// true - если компрессор работает
 	bool isCompressorWorking;
-	
+
+	// максимальное давление, которое может создать компрессор
 	double maxCompressorPressure;
 };

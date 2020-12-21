@@ -57,8 +57,6 @@ public:
 private:
 	static double const EPSILON;
 
-	auto checkPressure(double a_pressure) const -> void;
-
 	auto dpKVV(double a_deltaSeconds) -> void;
 	
 	auto dpPSK(double a_deltaSeconds) -> void;
@@ -71,13 +69,13 @@ private:
 	bool epkKey;
     //напряжение электромагнита
 	bool epkSignal;
-	//TODO
+	// true - если соединение камеры выдержки времени с атмосферой закрыто
 	bool epkValve;
-	//TODO
+	// true - если диафрагма прогнулась вверх
 	bool membrane;
-    //TODO
+    // true - если срывной клапан открыт
 	bool stallingValve;
-    //TODO
+    // обратный клапан
 	bool reverseValve;
 	//Давление Питательной магистрали
 	double pmPressure;

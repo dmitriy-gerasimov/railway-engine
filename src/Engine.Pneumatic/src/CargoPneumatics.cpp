@@ -1,7 +1,6 @@
 #include "CargoPneumatics.h"
 
 #include <cmath>
-#include <exception>
 
 double const CargoPneumatics::EPSILON = 0.000'001;
 
@@ -75,7 +74,7 @@ auto CargoPneumatics::getBrakeForce() const -> double
 		* (1003.0 * velocityKmpH + 19000.0) / (3217.0 * velocityKmpH + 760.0)
 		/ 25.0;
 
-	double const sandSupplyFactor = 1.0; // (m_owner->getElectrics().SandSupply() == 0) ? 1.0 : sandSupplyFactor;
+	double const sandSupplyFactor = 1.0;
 
 	double force = brakeForceFactor * sandSupplyFactor * k * ptc;
 
@@ -143,8 +142,6 @@ void CargoPneumatics::dpTM(double a_deltaSeconds)
 
 	if (ptm < 0.0)
 		ptm = 0.0;
-
-	checkPressure(ptm);
 }
 
 void CargoPneumatics::dpTC(double a_deltaSeconds)
@@ -154,12 +151,4 @@ void CargoPneumatics::dpTC(double a_deltaSeconds)
 		+ vr483.a_zr_tc / vr483.r_zr_tc * (vr483.getZRPressure() - ptc0)
 		- vr483.a_tc_atm / vr483.r_tc_atm * ptc0
 	) * a_deltaSeconds / Vtc;
-
-	checkPressure(ptc);
-}
-
-auto CargoPneumatics::checkPressure(double /*a_pressure*/) const -> void
-{
-	/*if (std::isnan(a_pressure) || a_pressure > 11.0 || a_pressure < -EPSILON)
-		throw std::exception();*/
 }

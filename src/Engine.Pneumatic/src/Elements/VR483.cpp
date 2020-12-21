@@ -1,8 +1,5 @@
 ﻿#include "VR483.h"
 
-#include <cmath>
-#include <exception>
-
 double const VR483::EPSILON = 0.000'001;
 
 double const VR483::V_MK = 0.002;
@@ -12,48 +9,48 @@ double const VR483::V_ZR = 0.055;
 double const VR483::V_KDR = 0.001;
 
 VR483::VR483(bool a_withAutoMode)
-	: a_tm_mk(0)
+	: a_kdr_tc(0)
+	, a_tc_atm(0)
+	, a_zr_tc(0)
+	, a_tm_zr(0)
+	, a_tm_mk(0)
+	, r_kdr_tc(1000.0)
+	, r_tc_atm(500.0)
+	, r_zr_tc(1500.0)
+	, r_tm_zr(1500.0)
+	, r_tm_mk(10.0)
+	, pmk(0.0)
+	, pmk0(0.0)
+	, pzk(0.0)
+	, pzk0(0.0)
+	, prk(0.0)
+	, prk0(0.0)
+	, pzr(0.0)
+	, pzr0(0.0)
+	, pkdr(0.0)
+	, pkdr0(0.0)
+	, maxTCPressure(4.0)
 	, a_mk_zk(0)
 	, a_mk_rk(0)
 	, a_mk_kdr(0)
 	, a_mk_atm(0)
 	, a_zk_rk(0)
-	, a_kdr_tc(0)
-	, a_tc_atm(0)
-	, a_rk_atm(0)
-	, a_zr_tc(0)
-	, a_tm_zr(0)
-	, a_kdr_atm(0)
-	, r_tm_mk(10.0)
+	, r_mk_zk(1000.0)
+	, r_mk_rk(1000.0)
 	, r_mk_kdr(400.0)
 	, r_mk_atm(1000.0)
 	, r_zk_rk(1000.0)
-	, r_kdr_tc(1000.0)
-	, r_tc_atm(500.0)
-	, r_zr_tc(1500.0)
+	, a_rk_atm(0)
+	, a_kdr_atm(0)
 	, r_rk_atm(500.0)
-	, r_tm_zr(1500.0)
 	, r_kdr_atm(500.0)
-	, r_mk_zk(1000.0)
-	, r_mk_rk(1000.0)
+	, withAutoMode(a_withAutoMode)
 	, tmPressure(0.0)
 	, tcPressure(0.0)
-	, pmk(0.0)
-	, pzk(0.0)
-	, prk(0.0)
-	, pzr(0.0)
-	, pkdr(0.0)
-	, pmk0(0.0)
-	, pzk0(0.0)
-	, prk0(0.0)
-	, pzr0(0.0)
-	, pkdr0(0.0)
-	, withAutoMode(a_withAutoMode)
-	, maxTCPressure(4.0)
+	, tmTapIsOpened(true)
+	, load(3)
 	, mass(0.0)
 	, cargoMass(0.0)
-	, load(3)
-	, tmTapIsOpened(true)
 {
 }
 
@@ -61,8 +58,8 @@ double VR483::minP(double p1, double p2) const
 {
 	if (p1 < p2)
 		return p1;
-	else
-		return p2;
+	
+	return p2;
 }
 
 void VR483::update(double a_deltaSeconds, double a_tmPressure, double a_tcPressure)
@@ -295,8 +292,6 @@ void VR483::dpMK(double a_deltaSeconds)
 		+ a_mk_rk / r_mk_rk * (prk0 - pmk0)
 		- a_mk_atm / r_mk_atm * pmk0
 	) * a_deltaSeconds / V_MK;
-
-	checkPressure(pmk);
 }
 
 void VR483::dpZK(double a_deltaSeconds)
@@ -305,8 +300,6 @@ void VR483::dpZK(double a_deltaSeconds)
 		a_mk_zk / r_mk_zk * (pmk0 - pzk0)
 		+ a_zk_rk / r_zk_rk * (prk0 - pzk0)
 	) * a_deltaSeconds / V_ZK;
-
-	checkPressure(pzk);
 }
 
 void VR483::dpRK(double a_deltaSeconds)
@@ -316,8 +309,6 @@ void VR483::dpRK(double a_deltaSeconds)
 		+ a_mk_rk / r_mk_rk * (pmk0 - prk0)
 		- a_rk_atm / r_rk_atm * prk0
 		) * a_deltaSeconds / V_RK;
-
-	checkPressure(prk);
 }
 
 void VR483::dpZR(double a_deltaSeconds)
@@ -326,8 +317,6 @@ void VR483::dpZR(double a_deltaSeconds)
 		a_tm_zr / r_tm_zr * (tmPressure - pzr0)
 		+ a_zr_tc / r_zr_tc * (tcPressure - pzr0)
 	) * a_deltaSeconds / V_ZR;
-
-	checkPressure(pzr);
 }
 
 void VR483::dpKDR(double a_deltaSeconds)
@@ -336,12 +325,4 @@ void VR483::dpKDR(double a_deltaSeconds)
 		a_mk_kdr / r_mk_kdr * (pmk0 - pkdr0)
 		+ a_kdr_tc / r_kdr_tc * (tcPressure - pkdr0)
 	) * a_deltaSeconds / V_KDR;
-
-	checkPressure(pkdr);
-}
-
-auto VR483::checkPressure(double /*a_pressure*/) const -> void
-{
-	/*if (std::isnan(a_pressure) || a_pressure > 10.0 || a_pressure < -EPSILON)
-		throw std::exception();*/
 }

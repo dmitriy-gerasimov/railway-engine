@@ -1,8 +1,5 @@
 #include "EPK150.h"
 
-#include <cmath>
-#include <exception>
-
 double const EPK150::EPSILON = 0.000'001;
 
 double const EPK150::V_KVV = 0.004;
@@ -140,8 +137,6 @@ void EPK150::dpKVV(double a_deltaSeconds)
 		a_pm_kvv / r_pm_kvv * (pmPressure - pkvv0)
 		- a_kvv_atm / r_kvv_atm * pkvv0
 	) * a_deltaSeconds / V_KVV;
-
-	checkPressure(pkvv);
 }
 void EPK150::dpPSK(double a_deltaSeconds)
 {
@@ -149,12 +144,4 @@ void EPK150::dpPSK(double a_deltaSeconds)
 		a_tm_psk / r_tm_psk * (tmPressure - ppsk0)
 		- a_psk_atm / r_psk_atm * ppsk0
 	) * a_deltaSeconds / V_PSK;
-
-	checkPressure(ppsk);
-}
-
-auto EPK150::checkPressure(double a_pressure) const -> void
-{
-	if (std::isnan(a_pressure) || a_pressure > 10.0 || a_pressure < -EPSILON)
-		throw std::exception();
 }

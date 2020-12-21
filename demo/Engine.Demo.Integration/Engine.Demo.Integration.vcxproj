@@ -123,24 +123,24 @@
     <ClInclude Include="WorldProxy.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Engine.Dynamics\Engine.Dynamics.vcxproj">
-      <Project>{b20d8744-9331-483c-9557-7c112a32d450}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Engine.Electric\Engine.Electric.vcxproj">
-      <Project>{dfb8e56c-e5d3-4ae6-97f4-678f937b4b25}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Engine.Example\Engine.Example.vcxproj">
-      <Project>{4be68118-ff1b-45a0-b64d-ea8ad464a4fd}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Engine.Graph\Engine.Graph.vcxproj">
-      <Project>{97228ffc-e243-4f9f-8101-6d8626189c4c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Engine.Pneumatic\Engine.Pneumatic.vcxproj">
-      <Project>{93c8c343-493b-4354-8d85-d1643b15f9d3}</Project>
-    </ProjectReference>
+    <ClCompile Include="WorldProxy.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WorldProxy.cpp" />
+    <ProjectReference Include="..\..\src\Engine.Dynamics\Engine.Dynamics.vcxproj">
+      <Project>{b20d8744-9331-483c-9557-7c112a32d450}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Engine.Electric\Engine.Electric.vcxproj">
+      <Project>{dfb8e56c-e5d3-4ae6-97f4-678f937b4b25}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Engine.Example\Engine.Example.vcxproj">
+      <Project>{4be68118-ff1b-45a0-b64d-ea8ad464a4fd}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Engine.Graph\Engine.Graph.vcxproj">
+      <Project>{97228ffc-e243-4f9f-8101-6d8626189c4c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Engine.Pneumatic\Engine.Pneumatic.vcxproj">
+      <Project>{93c8c343-493b-4354-8d85-d1643b15f9d3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
