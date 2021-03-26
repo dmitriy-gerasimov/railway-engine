@@ -3,6 +3,7 @@
 #include <cmath>
 
 RailedVehicle::RailedVehicle(
+	size_t a_number,
 	ArcLocation a_front,
 	ArcLocation a_back,
 	std::unique_ptr<Dynamic>&& a_dynamic,
@@ -14,13 +15,20 @@ RailedVehicle::RailedVehicle(
 	, dynamic(std::move(a_dynamic))
 	, pneumatic(std::move(a_pneumatic))
 	, electric(std::move(a_electric))
+	, number(a_number)
 {
-	updateCouplings();
+	dynamic->getFrontCoupling()->setVelocity(this->dynamic->getVelocity());
+	dynamic->getBackCoupling()->setVelocity(this->dynamic->getVelocity());
+
+	dynamic->getFrontCoupling()->setWorldLocation(front.getWorldLocation());
+	dynamic->getBackCoupling()->setWorldLocation(back.getWorldLocation());
 }
+
+RailedVehicle::~RailedVehicle() = default;
 
 auto RailedVehicle::update(double a_deltaSeconds) -> void
 {
-	this->dynamic->setTractionForce(electric->getTractionForce());
+	dynamic->setTractionForce(electric->getTractionForce());
 
 	auto const frontWorldLocation = front.getWorldLocation();
 	auto const backWorldLocation = back.getWorldLocation();
@@ -33,47 +41,59 @@ auto RailedVehicle::update(double a_deltaSeconds) -> void
 	double const gradient = (frontWorldLocation.getZ() - backWorldLocation.getZ()) / distance.magnitude();
 	if (std::isnan(gradient))
 	{
-		throw std::exception();
+		// throw std::exception();
 	}
 	
-	this->dynamic->setGradient(gradient);
+	dynamic->setGradient(gradient);
 
-	double const brakeForce = pneumatic->getBrakeForce() + electric->getBrakeForce();
-	this->dynamic->setBrakeForce(brakeForce);
-
-	updateCouplings();
+	dynamic->setBrakeForce(pneumatic->getBrakeForce() + electric->getBrakeForce());
 	
-	this->dynamic->update(a_deltaSeconds);
-	
-	this->pneumatic->update(a_deltaSeconds);
-	this->pneumatic->refresh();
+	dynamic->update(a_deltaSeconds);
 
-	this->electric->update(a_deltaSeconds);
-	this->electric->refresh();
+	dynamic->getFrontCoupling()->setVelocity(dynamic->getVelocity());
+	dynamic->getBackCoupling()->setVelocity(dynamic->getVelocity());
+
+	pneumatic->setVelocity(dynamic->getVelocity());
+
+	pneumatic->update(a_deltaSeconds);
+	pneumatic->refresh();
+
+	electric->setVelocity(dynamic->getVelocity());
+
+	electric->update(a_deltaSeconds);
+	electric->refresh();
 }
 
 auto RailedVehicle::move() -> void
 {
 	double const offset = this->dynamic->getOffset();
 
-	if (offset >= 0.0)
+	move(offset);
+}
+
+auto RailedVehicle::move(double a_offset) -> void
+{
+	if (a_offset >= 0.0)
 	{
-		bool const success = front.move(offset);
+		bool const success = front.move(a_offset);
 
 		if (success)
 		{
-			back.move(offset);
+			back.move(a_offset);
 		}
 	}
 	else
 	{
-		bool const success = back.move(offset);
+		bool const success = back.move(a_offset);
 
 		if (success)
 		{
-			front.move(offset);
+			front.move(a_offset);
 		}
 	}
+
+	dynamic->getFrontCoupling()->setWorldLocation(front.getWorldLocation());
+	dynamic->getBackCoupling()->setWorldLocation(back.getWorldLocation());
 }
 
 auto RailedVehicle::getGradient() const -> double
@@ -101,13 +121,7 @@ auto RailedVehicle::getElectric() const -> Electric*
 	return electric.get();
 }
 
-auto RailedVehicle::updateCouplings() -> void
+auto RailedVehicle::getNumber() const -> size_t
 {
-	auto* frontCoupling = this->dynamic->getFrontCoupling();
-	frontCoupling->setWorldLocation(front.getWorldLocation());
-	frontCoupling->setVelocity(this->dynamic->getVelocity());
-
-	auto* backCoupling = this->dynamic->getBackCoupling();
-	backCoupling->setWorldLocation(back.getWorldLocation());
-	backCoupling->setVelocity(this->dynamic->getVelocity());
+	return number;
 }

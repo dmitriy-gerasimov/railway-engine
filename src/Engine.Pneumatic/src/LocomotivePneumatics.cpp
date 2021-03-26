@@ -14,6 +14,7 @@ LocomotivePneumatics::LocomotivePneumatics()
 	, ppm(0.0)
 	, ppm0(0.0)
 	, Vtm(0.044)
+	, VtmBegin(0.044)
 	, ptm(0.0)
 	, ptm0(0.0)
 	, Vim(0.005)
@@ -25,15 +26,19 @@ LocomotivePneumatics::LocomotivePneumatics()
 	, Vtc(0.005)
 	, ptc(0.0)
 	, ptc0(0.0)
+	, ptmBegin(0.0)
+	, ptmBegin0(0.0)
 	, a_gr_pm(1)
 	, a_tm_atm_leak(1)
 	, a_mvt_tc(1)
+	, a_tmBegin_tm(1)
 	, r_gr_pm(5.0)
 	, r_tm_atm_leak(140'000.0)
 	, r_mvt_tc(1.0)
+	, r_tmBegin_tm(20.0)
 	, vr483(true)
 	, velocity(0.0)
-	, brakeForceFactor(1.0)
+	, brakeForceFactor(10'000'000.0)
 	, compressorProductivity(0.1)
 	, isCompressorWorking(false)
 	, maxCompressorPressure(9.0)
@@ -49,7 +54,7 @@ LocomotivePneumatics::LocomotivePneumatics()
 	epk150.setPMTapIsOpened(true);
 
 #ifdef _DEBUG
-	setDefaultPneumaticValues();
+	// setDefaultPneumaticValues();
 #endif
 }
 
@@ -63,10 +68,11 @@ auto LocomotivePneumatics::update(double a_deltaSeconds) -> void
 	dpIM(a_deltaSeconds);
 	dpMVT(a_deltaSeconds);
 	dpTC(a_deltaSeconds);
+	dpTMBegin(a_deltaSeconds);
 
 	tap254.update(a_deltaSeconds, ppm0, pmvt0, pim0);
 
-	tap395.update(a_deltaSeconds, ppm0, ptm0);
+	tap395.update(a_deltaSeconds, ppm0, ptmBegin0);
 
 	vr483.update(a_deltaSeconds, ptm0, pim0);
 
@@ -81,6 +87,7 @@ auto LocomotivePneumatics::refresh() -> void
 	pim0  = pim;
 	pmvt0 = pmvt;
 	ptc0  = ptc;
+	ptmBegin0 = ptmBegin;
 
 	tap254.refresh();
 
@@ -109,6 +116,11 @@ auto LocomotivePneumatics::getURPressure() const -> double
 auto LocomotivePneumatics::getTCPressure() const -> double
 {
 	return ptc0;
+}
+
+auto LocomotivePneumatics::getTMBeginPressure() const -> double
+{
+	return ptmBegin0;
 }
 
 auto LocomotivePneumatics::getBrakeForce() const -> double
@@ -251,7 +263,7 @@ void LocomotivePneumatics::dpPM(double a_deltaSeconds)
 	ppm = ppm0 + (
 		a_gr_pm / r_gr_pm * (pgr0 - ppm0)
 		+ (tap395.a_pm_up / tap395.r_pm_up + tap395.a_pm_up_red / tap395.r_pm_up_red) * (tap395.getUPPressure() - ppm0)
-		+ (tap395.a_pm_tm / tap395.r_pm_tm + tap395.a_pm_tm_por / tap395.r_pm_tm_por) * (ptm0 - ppm0)
+		+ (tap395.a_pm_tm / tap395.r_pm_tm + tap395.a_pm_tm_por / tap395.r_pm_tm_por) * (ptmBegin0 - ppm0)
 		+ tap254.a_pm_mvt / tap254.r_pm_mvt * (pmvt0 - ppm0)
 		+ epk150.a_pm_kvv / epk150.r_pm_kvv * (epk150.getKvvPressure() - ppm0)
 	) * a_deltaSeconds / Vpm;
@@ -262,27 +274,18 @@ void LocomotivePneumatics::dpTM(double a_deltaSeconds)
 	double const tm_front_flow = getFrontPneumaticConnector()->getConnectorFlow();
 	double const tm_back_flow = getBackPneumaticConnector()->getConnectorFlow();
 
-	double const pm_tm_flow = (tap395.a_pm_tm / tap395.r_pm_tm + tap395.a_pm_tm_por / tap395.r_pm_tm_por) * (ppm0 - ptm0);
-	double const up_tm_flow = tap395.a_up_tm / tap395.r_up_tm * (tap395.getUPPressure() - ptm0);
+	double const tm_tmBegin_flow = a_tmBegin_tm / r_tmBegin_tm * (ptmBegin0 - ptm0);
 	double const tm_mk_flow = vr483.a_tm_mk / vr483.r_tm_mk * (vr483.getMKPressure() - ptm0);
 	double const tm_zr_flow = vr483.a_tm_zr / vr483.r_tm_zr * (vr483.getZRPressure() - ptm0);
 	double const tm_psk_flow = epk150.a_tm_psk / epk150.r_tm_psk * (epk150.getPskPressure() - ptm0);
-	double const tm_atm_flow = (
-		tap395.a_tm_atm_por / tap395.r_tm_atm_por
-		+ epk150.a_tm_atm / epk150.r_tm_atm
-		+ a_tm_atm_leak / r_tm_atm_leak
-		+ tap395.a_tm_atm / tap395.r_tm_atm
-	) * ptm0;
 
 	ptm = ptm0 + (
-		pm_tm_flow
-		+ up_tm_flow
+		tm_tmBegin_flow
 		+ tm_mk_flow
 		+ tm_zr_flow
 		+ tm_psk_flow
 		+ tm_front_flow
 		+ tm_back_flow
-		- tm_atm_flow
 	) * a_deltaSeconds / Vtm;
 
 	if (ptm < 0.0)
@@ -294,6 +297,32 @@ void LocomotivePneumatics::dpTC(double a_deltaSeconds)
 	ptc = ptc0 + (
 		a_mvt_tc / r_mvt_tc * (pmvt0 - ptc0)
 	) * a_deltaSeconds / Vtc;
+}
+
+void LocomotivePneumatics::dpTMBegin(double a_deltaSeconds)
+{
+	double const pm_tmBegin_flow = (tap395.a_pm_tm / tap395.r_pm_tm + tap395.a_pm_tm_por / tap395.r_pm_tm_por) * (ppm0 - ptmBegin0);
+	double const up_tmBegin_flow = tap395.a_up_tm / tap395.r_up_tm * (tap395.getUPPressure() - ptmBegin0);
+	double const tm_tmBegin_flow = a_tmBegin_tm / r_tmBegin_tm * (ptm0 - ptmBegin0);
+
+	double const tmBegin_atm_flow = (
+		tap395.a_tm_atm_por / tap395.r_tm_atm_por
+		+ epk150.a_tm_atm / epk150.r_tm_atm
+		+ a_tm_atm_leak / r_tm_atm_leak
+		+ tap395.a_tm_atm / tap395.r_tm_atm
+		) * ptmBegin0;
+
+	ptmBegin = ptmBegin0 + (
+		pm_tmBegin_flow
+		+ up_tmBegin_flow
+		+ tm_tmBegin_flow
+		- tmBegin_atm_flow
+	) * a_deltaSeconds / VtmBegin;
+
+	if (ptmBegin < 0.0)
+	{
+		ptmBegin = 0.0;
+	}
 }
 
 void LocomotivePneumatics::dpIM(double a_deltaSeconds)

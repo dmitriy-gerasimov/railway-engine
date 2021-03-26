@@ -1,29 +1,36 @@
 ﻿#include "Coupling.h"
+#include <exception>
+
+double const Coupling::Epsilon = 0.000'01;
 
 Coupling::Coupling(bool a_isFront)
 	: connectedCoupling(nullptr)
 	, initialDistanceToConnectedCoupling(0.0)
-	, k(6'000'000.0)
-	, r(600'000.0)
+	, k(12'000'000.0)
+	, r(1'200'000.0)
+	//, k(2'000'000.0)
+	//, r(200'000.0)
 	, isOpened(false)
 	, worldLocation(Vector3D(0.0, 0.0, 0.0))
 	, connectedWorldLocation(Vector3D(0.0, 0.0, 0.0))
 	, velocity(0.0)
+	, mass(0.0)
 	, isFront(a_isFront)
 	, force(0.0)
 	, distanceToConnectedCoupling(0.0)
 	, neighborVelocity(0.0)
+	, zeroThreshold(0.03)
 {
 }
 
 Coupling::~Coupling() = default;
 
-auto Coupling::getConnectedCoupling() const -> Coupling const*
+auto Coupling::getConnectedCoupling() const -> Coupling*
 {
 	return this->connectedCoupling;
 }
 
-auto Coupling::setConnectedCoupling(Coupling const* a_coupling) -> void
+auto Coupling::setConnectedCoupling(Coupling* a_coupling) -> void
 {
 	this->connectedCoupling = a_coupling;
 
@@ -74,14 +81,15 @@ auto Coupling::update(double /*a_deltaSeconds*/) -> void
 		return;
 	}
 
+	// 3D координата соседней сцепки
 	connectedWorldLocation = connectedCoupling->getWorldLocation();
-
-	// расстояние до соседней автосцепки
-	distanceToConnectedCoupling = (connectedWorldLocation - worldLocation).magnitude() - initialDistanceToConnectedCoupling;
-
+	
+	// расстояние до соседней сцепки
+	double distance = getDistanceToConnectedCoupling();
+	
 	bool const isStretching = distanceToConnectedCoupling > 0.0;
 
-	// если сцепка открыта и находится в растянутом состоянии, то сила через неё не передаётся
+	// если сцепка открыта и растягивается состоянии, то сила через неё не передаётся
 	if (isStretching && (this->getIsOpened() || this->connectedCoupling->getIsOpened()))
 	{
 		force = 0.0;
@@ -89,19 +97,56 @@ auto Coupling::update(double /*a_deltaSeconds*/) -> void
 	}
 
 	// скорость соседнего вагона относительно нашего вагона
-	neighborVelocity = (getIsFront() != connectedCoupling->getIsFront())
-		? this->connectedCoupling->getVelocity()
-		: -this->connectedCoupling->getVelocity();
-
-	double const speedDifference = neighborVelocity - velocity;
+	// (скорость > 0, если соседний вагон удаляется от нашего
+	// скорость < 0, если  соседний вагон приближается к нашему)
+	double speedDifference = (getIsFront())
+		? this->connectedCoupling->getVelocity() - velocity
+		: velocity - this->connectedCoupling->getVelocity();
 	
-	force = (this->getK() + this->connectedCoupling->getK()) / 2.0 * distanceToConnectedCoupling
-		+ (this->getR() + this->connectedCoupling->getR()) / 2.0 * speedDifference;
-
-	if (!isStretching)
+	if (abs(distance) < Epsilon)
 	{
-		force *= 0.8;
+		distance = 0.0;
 	}
+
+	if (abs(speedDifference) < Epsilon)
+	{
+		speedDifference = 0.0;
+	}
+
+	// корректировка distance для имитации свободного хода
+	if (distance > zeroThreshold)
+	{
+		distance -= zeroThreshold;
+	}
+	else if (distance < -zeroThreshold)
+	{
+		distance += zeroThreshold;
+	}
+	else
+	{
+		distance = 0.0;
+		speedDifference = 0.0;
+	}
+
+	force = (this->getK() + this->connectedCoupling->getK()) / 2.0 * distance
+		+ (this->getR() + this->connectedCoupling->getR()) / 2.0 * speedDifference;
+}
+
+auto Coupling::getDistanceToConnectedCoupling() const -> double
+{
+	if (!hasConnectedCoupling())
+	{
+		return 0.0;
+	}
+
+	return (connectedWorldLocation - worldLocation).magnitude() - initialDistanceToConnectedCoupling;
+}
+
+auto Coupling::setCouplingParameters(double a_k, double a_r, double a_freeWheelAmount) -> void
+{
+	k = a_k;
+	r = a_r;
+	zeroThreshold = a_freeWheelAmount;
 }
 
 auto Coupling::hasConnectedCoupling() const -> bool
@@ -127,6 +172,16 @@ auto Coupling::getVelocity() const -> double
 auto Coupling::setVelocity(double a_velocity) -> void
 {
 	velocity = a_velocity;
+}
+
+auto Coupling::getMass() -> const double
+{
+	return mass;
+}
+
+auto Coupling::setMass(double a_mass) -> void
+{
+	mass = a_mass;
 }
 
 auto Coupling::getIsFront() const -> bool

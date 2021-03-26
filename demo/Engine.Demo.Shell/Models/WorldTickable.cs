@@ -7,7 +7,7 @@ namespace Engine.Demo.Shell.Models
 {
 	public sealed class WorldTickable : ITickable, IDisposable
 	{
-		private readonly WorldProxy worldProxy = new WorldProxy();
+		private readonly WorldProxy worldProxy = new();
 
 		public int Tap395Position { get; set; }
 		public int Tap254Position { get; set; }
@@ -20,10 +20,10 @@ namespace Engine.Demo.Shell.Models
 		public int CombinedTapPosition { get; set; }
 		public double CompressorProductivity { get; set; } = 100;
 
-		public LocomotiveOutputData LocomotiveOutputData { get; set; } = new LocomotiveOutputData();
-		public List<CargoOutputData> CargoPhysicsOutputData { get; set; } = new List<CargoOutputData>();
-
-		public List<RailedVehiclesInputData> VehiclesInputData { get; set; } = new List<RailedVehiclesInputData>();
+		public LocomotiveOutputData LocomotiveOutputData { get; set; } = new();
+		public List<CargoOutputData> CargoPhysicsOutputData { get; set; } = new();
+		public List<RailedVehiclesInputData> VehiclesInputData { get; set; } = new();
+		public DynamicSettings DynamicSettings { get; set; } = new();
 
 		public const uint CargoVehiclesCount = 20;
 		private const uint RailedVehiclesCount = CargoVehiclesCount + 1;
@@ -58,18 +58,32 @@ namespace Engine.Demo.Shell.Models
 
 		public void Tick(in LifeCycleContext lifeCycleContext)
 		{
-			worldProxy.setLocomotivePhysicsInputData(
-				Tap395Position,
-				Tap254Position,
-				Compressor,
-				EpkKey,
-				DiscUnit,
-				Reducer,
-				EpkSignal,
-				Controller,
-				CombinedTapPosition,
-				CompressorProductivity / 1000.0
-			);
+			var inputDataDto = new WorldProxy.LocomotivePhysicsInputData()
+			{
+				tap395Position = Tap395Position,
+				tap254Position = Tap254Position,
+				isCompressorWorking = Compressor,
+				epkKey = EpkKey,
+				disconnectUnit = DiscUnit,
+				reducer = Reducer,
+				epkSignal = EpkSignal,
+				controllerPosition = Controller,
+				combinedTapPosition = CombinedTapPosition,
+				compressorProductivity = CompressorProductivity / 1000.0
+			};
+
+			worldProxy.setLocomotivePhysicsInputData(inputDataDto);
+
+			var inputDynamicDataDto = new WorldProxy.DynamicData()
+			{
+				K = DynamicSettings.K,
+				R = DynamicSettings.R,
+				MaxTensionCoupling = DynamicSettings.MaxTensionCoupling,
+				MaxCompressionCoupling = DynamicSettings.MaxCompressionCoupling,
+				FreeWheelAmount = DynamicSettings.FreeWheelAmount
+			};
+
+			worldProxy.setDynamicData(inputDynamicDataDto);
 
 			foreach (var inputData in VehiclesInputData)
 			{
@@ -90,6 +104,8 @@ namespace Engine.Demo.Shell.Models
 				CargoPhysicsOutputData[i].ZR = info.zrPressure;
 				CargoPhysicsOutputData[i].Velocity = info.velocity;
 				CargoPhysicsOutputData[i].Distance = info.distance;
+				CargoPhysicsOutputData[i].CouplingDistance = info.couplingDistance;
+				CargoPhysicsOutputData[i].CouplingForce = info.couplingForce;
 			}
 
 			var outputData = worldProxy.getLocomotivePhysicsOutputData();
@@ -102,6 +118,8 @@ namespace Engine.Demo.Shell.Models
 			LocomotiveOutputData.ZR = outputData.zrPressure;
 			LocomotiveOutputData.Velocity = outputData.velocity;
 			LocomotiveOutputData.Distance = outputData.distance;
+			LocomotiveOutputData.CouplingDistance = outputData.couplingDistance;
+			LocomotiveOutputData.CouplingForce = outputData.couplingForce;
 		}
 
 		public void Dispose()

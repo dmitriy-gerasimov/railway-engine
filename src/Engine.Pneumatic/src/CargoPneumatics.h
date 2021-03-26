@@ -31,7 +31,7 @@ public:
 
 	auto getTCPressure() const -> double;
 
-	auto setVelocity(double a_velocity);
+	auto setVelocity(double a_velocity) -> void override;
 
 	auto getBrakeForceFactor() const -> double;
 

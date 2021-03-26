@@ -44,6 +44,8 @@ public:
 	auto setIsBackTmPipeConnected(bool a_value) -> void;
 
 	virtual auto setDefaultPneumaticValues() -> void = 0;
+
+	virtual auto setVelocity(double a_velocity) -> void = 0;
 	
 private:
 	// передний пневматический соединитель

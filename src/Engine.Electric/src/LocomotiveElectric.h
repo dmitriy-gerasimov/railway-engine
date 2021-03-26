@@ -25,8 +25,12 @@ public:
 
 	auto setControllerPosition(int a_controllerPosition) -> void;
 
+	auto setVelocity(double a_velocity) -> void override;
+
 private:
 	int controllerPosition;
 
 	double tractionForce;
+
+	double velocity;
 };

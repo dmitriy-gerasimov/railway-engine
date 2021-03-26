@@ -52,6 +52,8 @@ public:
 
 	auto setBrakeForce(double a_force) -> void;
 
+	auto setCouplingParameters(double k, double r, double freeWheelAmount) -> void;
+
 	/**
 	 * \brief Получить уклон
 	 * \return 
@@ -101,6 +103,8 @@ private:
 
 	// скорость (> 0.0 - едем вперёд, иначе - назад), м/с
 	double velocity;
+
+	double previousVelocity;
 
 	// смещение за один кадр (> 0.0 - едем вперёд, иначе - назад), м
 	double offset;

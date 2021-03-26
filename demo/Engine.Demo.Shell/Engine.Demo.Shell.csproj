@@ -74,8 +74,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="demo\Engine.Demo.Shell\MainWindow.MainWindow.cs" />
     <Compile Include="Lock367Converter.cs" />
     <Compile Include="Models\CargoOutputData.cs" />
+    <Compile Include="Models\DynamicSettings.cs" />
     <Compile Include="Models\LocomotiveOutputData.cs" />
     <Compile Include="Models\RailedVehiclesInputData.cs" />
     <Compile Include="Models\WorldCycle.cs" />

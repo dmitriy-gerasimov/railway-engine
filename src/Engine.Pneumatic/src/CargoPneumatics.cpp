@@ -18,7 +18,7 @@ CargoPneumatics::CargoPneumatics()
 	, r_tm_atm_leak(140'000.0)
 	, vr483(true)
 	, velocity(0.0)
-	, brakeForceFactor(1.0)
+	, brakeForceFactor(10'000.0)
 {
 	vr483.setTMTapIsOpened(true);
 
@@ -27,7 +27,7 @@ CargoPneumatics::CargoPneumatics()
 	vr483.setCargoMass(0.0);
 
 #ifdef _DEBUG
-	CargoPneumatics::setDefaultPneumaticValues();
+	// CargoPneumatics::setDefaultPneumaticValues();
 #endif
 }
 
@@ -86,7 +86,7 @@ auto CargoPneumatics::getBrakeForce() const -> double
 	return force;
 }
 
-auto CargoPneumatics::setVelocity(double a_velocity)
+auto CargoPneumatics::setVelocity(double a_velocity) -> void
 {
 	velocity = a_velocity;
 }

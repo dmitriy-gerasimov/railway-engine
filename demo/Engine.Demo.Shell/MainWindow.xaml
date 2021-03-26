@@ -22,349 +22,489 @@
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="111*" />
-                <ColumnDefinition Width="68*" />
-            </Grid.ColumnDefinitions>
+        <TabControl>
+            <TabItem Header="Динамика">
 
-            <syncfusion:SfCircularGauge
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="40,0,40,1"
-                GaugeHeaderPosition="0.4,0.85"
-                HeaderAlignment="Custom">
-                <syncfusion:SfCircularGauge.GaugeHeader>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="УР - " />
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="ТМ - " />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="{Binding MainTickable.LocomotiveOutputData.UR, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
-                    </Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Margin="0,0,0,0.5">
+                        <StackPanel Name="StackPanelVehicles">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    Лок.
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center">
+                                    ТМ
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Center"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="3"
+                                    HorizontalAlignment="Center">
+                                    ТЦ
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="4"
+                                    HorizontalAlignment="Center"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="5"
+                                    HorizontalAlignment="Center">
+                                    ЗР
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="6"
+                                    HorizontalAlignment="Center"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.ZR, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                                <ProgressBar
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2"
+                                    Height="15"
+                                    Margin="5"
+                                    Maximum="10"
+                                    Value="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged}" />
+                                <ProgressBar
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    Grid.ColumnSpan="2"
+                                    Height="15"
+                                    Margin="5"
+                                    Maximum="4"
+                                    Value="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged}" />
+                                <ProgressBar
+                                    Grid.Row="1"
+                                    Grid.Column="5"
+                                    Grid.ColumnSpan="2"
+                                    Height="15"
+                                    Margin="5"
+                                    Maximum="10"
+                                    Minimum="0"
+                                    Value="{Binding MainTickable.LocomotiveOutputData.ZR, UpdateSourceTrigger=PropertyChanged}" />
+                                <Grid
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="7">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsChecked="{Binding MainTickable.VehiclesInputData[0].IsConnected, UpdateSourceTrigger=PropertyChanged}" />
+                                    <CheckBox
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsChecked="{Binding MainTickable.VehiclesInputData[0].FrontValve, UpdateSourceTrigger=PropertyChanged}" />
+                                    <CheckBox
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsChecked="{Binding MainTickable.VehiclesInputData[0].BackValve, UpdateSourceTrigger=PropertyChanged}" />
+                                    <CheckBox
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsChecked="{Binding MainTickable.VehiclesInputData[0].VrValve, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="8"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    V (км/ч)
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="8"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.Velocity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.##}}" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="9"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    S (м)
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="9"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.Distance, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.##}}" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="10"
+                                    Grid.ColumnSpan="2"
+                                    Margin="10,0,0,0">
+                                    Сцепка - дист (мм)
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="11"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Right"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.CouplingDistance, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                                <Slider
+                                    Grid.Row="1"
+                                    Grid.Column="10"
+                                    Grid.ColumnSpan="3"
+                                    Margin="5"
+                                    Maximum="100"
+                                    Minimum="-100"
+                                    Value="{Binding MainTickable.LocomotiveOutputData.CouplingDistance, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="13"
+                                    Grid.ColumnSpan="2"
+                                    Margin="10,0,0,0">
+                                    Сцепка F (kH)
+                                </TextBlock>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="14"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Right"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.CouplingForce, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                                <Slider
+                                    Grid.Row="1"
+                                    Grid.Column="13"
+                                    Grid.ColumnSpan="3"
+                                    Margin="5"
+                                    Maximum="1000"
+                                    Minimum="-1000"
+                                    Value="{Binding MainTickable.LocomotiveOutputData.CouplingForce, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Пневматика">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <syncfusion:SfCircularGauge
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="40,0,40,0.5"
+                        GaugeHeaderPosition="0.4,0.85"
+                        HeaderAlignment="Custom">
+                        <syncfusion:SfCircularGauge.GaugeHeader>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="УР - " />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="ТМ - " />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.UR, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                            </Grid>
 
 
-                </syncfusion:SfCircularGauge.GaugeHeader>
-                <syncfusion:SfCircularGauge.Scales>
-                    <syncfusion:CircularScale
-                        EndValue="10"
-                        Interval="2"
-                        MinorTicksPerInterval="5"
-                        Radius="150"
-                        SmallTickLength="10"
-                        SmallTickStrokeThickness="2"
-                        TickStroke="Black">
-                        <syncfusion:CircularScale.Pointers>
-                            <syncfusion:CircularPointer
-                                NeedleLengthFactor="0.75"
-                                NeedlePointerStroke="Black"
-                                NeedlePointerType="Triangle"
-                                PointerCapDiameter="30"
-                                PointerCapStroke="#39B2C6"
-                                PointerType="NeedlePointer"
-                                Value="{Binding MainTickable.LocomotiveOutputData.UR, UpdateSourceTrigger=PropertyChanged}" />
-                        </syncfusion:CircularScale.Pointers>
-                    </syncfusion:CircularScale>
-                    <syncfusion:CircularScale
-                        EndValue="10"
-                        Interval="2"
-                        MinorTicksPerInterval="5"
-                        Radius="150"
-                        SmallTickLength="10"
-                        SmallTickStrokeThickness="2"
-                        TickStroke="Black">
-                        <syncfusion:CircularScale.Pointers>
-                            <syncfusion:CircularPointer
-                                NeedleLengthFactor="0.75"
-                                NeedlePointerStroke="Red"
-                                NeedlePointerType="Triangle"
-                                PointerCapDiameter="30"
-                                PointerCapStroke="#39B2C6"
-                                PointerType="NeedlePointer"
-                                Value="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged}" />
-                        </syncfusion:CircularScale.Pointers>
-                    </syncfusion:CircularScale>
-                </syncfusion:SfCircularGauge.Scales>
-            </syncfusion:SfCircularGauge>
-            <syncfusion:SfCircularGauge
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="40,0,40,1"
-                GaugeHeaderPosition="0.4,0.85"
-                HeaderAlignment="Custom">
-                <syncfusion:SfCircularGauge.GaugeHeader>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="ГР - " />
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="ТЦ - " />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="{Binding MainTickable.LocomotiveOutputData.Pm, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            FontSize="14"
-                            Foreground="Black"
-                            Text="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
-                    </Grid>
-                </syncfusion:SfCircularGauge.GaugeHeader>
-                <syncfusion:SfCircularGauge.Scales>
-                    <syncfusion:CircularScale
-                        EndValue="16"
-                        Interval="2"
-                        MinorTicksPerInterval="5"
-                        Radius="150"
-                        SmallTickLength="10"
-                        SmallTickStrokeThickness="2"
-                        TickStroke="Black">
-                        <syncfusion:CircularScale.Pointers>
-                            <syncfusion:CircularPointer
-                                NeedleLengthFactor="0.75"
-                                NeedlePointerStroke="Black"
-                                NeedlePointerType="Triangle"
-                                PointerCapDiameter="30"
-                                PointerCapStroke="#39B2C6"
-                                PointerType="NeedlePointer"
-                                Value="{Binding MainTickable.LocomotiveOutputData.Pm, UpdateSourceTrigger=PropertyChanged}" />
-                        </syncfusion:CircularScale.Pointers>
-                    </syncfusion:CircularScale>
-                    <syncfusion:CircularScale
-                        EndValue="16"
-                        Interval="2"
-                        MinorTicksPerInterval="5"
-                        Radius="150"
-                        SmallTickLength="10"
-                        SmallTickStrokeThickness="2"
-                        TickStroke="Black">
-                        <syncfusion:CircularScale.Pointers>
-                            <syncfusion:CircularPointer
-                                NeedleLengthFactor="0.75"
-                                NeedlePointerStroke="Red"
-                                NeedlePointerType="Triangle"
-                                PointerCapDiameter="30"
-                                PointerCapStroke="#39B2C6"
-                                PointerType="NeedlePointer"
-                                Value="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged}" />
-                        </syncfusion:CircularScale.Pointers>
-                    </syncfusion:CircularScale>
-                </syncfusion:SfCircularGauge.Scales>
-            </syncfusion:SfCircularGauge>
-            <ScrollViewer
-                Grid.Row="0"
-                Grid.RowSpan="2"
-                Grid.Column="0">
-
-                <StackPanel Name="StackPanelVehicles">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            Grid.Column="0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                            Локомотив
-                        </TextBlock>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            HorizontalAlignment="Center">
-                            ТМ
-                        </TextBlock>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            HorizontalAlignment="Center"
-                            Text="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="3"
-                            HorizontalAlignment="Center">
-                            ТЦ
-                        </TextBlock>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="4"
-                            HorizontalAlignment="Center"
-                            Text="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="5"
-                            HorizontalAlignment="Center">
-                            ЗР
-                        </TextBlock>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="6"
-                            HorizontalAlignment="Center"
-                            Text="{Binding MainTickable.LocomotiveOutputData.ZR, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
-                        <ProgressBar
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="2"
-                            Height="15"
-                            Margin="5"
-                            Maximum="10"
-                            Value="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged}" />
-                        <ProgressBar
-                            Grid.Row="1"
-                            Grid.Column="3"
-                            Grid.ColumnSpan="2"
-                            Height="15"
-                            Margin="5"
-                            Maximum="4"
-                            Value="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged}" />
-                        <ProgressBar
-                            Grid.Row="1"
-                            Grid.Column="5"
-                            Grid.ColumnSpan="2"
-                            Height="15"
-                            Margin="5"
-                            Maximum="10"
-                            Value="{Binding MainTickable.LocomotiveOutputData.ZR, UpdateSourceTrigger=PropertyChanged}" />
-                        <Grid
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            Grid.Column="7">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <CheckBox
-                                Grid.Row="0"
-                                Grid.RowSpan="2"
-                                Grid.Column="0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                IsChecked="{Binding MainTickable.VehiclesInputData[0].IsConnected, UpdateSourceTrigger=PropertyChanged}" />
-                            <CheckBox
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                IsChecked="{Binding MainTickable.VehiclesInputData[0].FrontValve, UpdateSourceTrigger=PropertyChanged}" />
-                            <CheckBox
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                IsChecked="{Binding MainTickable.VehiclesInputData[0].BackValve, UpdateSourceTrigger=PropertyChanged}" />
-                            <CheckBox
-                                Grid.Row="0"
-                                Grid.RowSpan="2"
-                                Grid.Column="2"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                IsChecked="{Binding MainTickable.VehiclesInputData[0].VrValve, UpdateSourceTrigger=PropertyChanged}" />
-
-                        </Grid>
-
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="8"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                            Скорость
-                        </TextBlock>
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="8"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Text="{Binding MainTickable.LocomotiveOutputData.Velocity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.##}}" />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="9"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                            Путь
-                        </TextBlock>
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="9"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Text="{Binding MainTickable.LocomotiveOutputData.Distance, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.##}}" />
-                    </Grid>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
-        <Border
+                        </syncfusion:SfCircularGauge.GaugeHeader>
+                        <syncfusion:SfCircularGauge.Scales>
+                            <syncfusion:CircularScale
+                                EndValue="10"
+                                Interval="2"
+                                MinorTicksPerInterval="5"
+                                Radius="150"
+                                SmallTickLength="10"
+                                SmallTickStrokeThickness="2"
+                                TickStroke="Black">
+                                <syncfusion:CircularScale.Pointers>
+                                    <syncfusion:CircularPointer
+                                        NeedleLengthFactor="0.75"
+                                        NeedlePointerStroke="Black"
+                                        NeedlePointerType="Triangle"
+                                        PointerCapDiameter="30"
+                                        PointerCapStroke="#39B2C6"
+                                        PointerType="NeedlePointer"
+                                        Value="{Binding MainTickable.LocomotiveOutputData.UR, UpdateSourceTrigger=PropertyChanged}" />
+                                </syncfusion:CircularScale.Pointers>
+                            </syncfusion:CircularScale>
+                            <syncfusion:CircularScale
+                                EndValue="10"
+                                Interval="2"
+                                MinorTicksPerInterval="5"
+                                Radius="150"
+                                SmallTickLength="10"
+                                SmallTickStrokeThickness="2"
+                                TickStroke="Black">
+                                <syncfusion:CircularScale.Pointers>
+                                    <syncfusion:CircularPointer
+                                        NeedleLengthFactor="0.75"
+                                        NeedlePointerStroke="Red"
+                                        NeedlePointerType="Triangle"
+                                        PointerCapDiameter="30"
+                                        PointerCapStroke="#39B2C6"
+                                        PointerType="NeedlePointer"
+                                        Value="{Binding MainTickable.LocomotiveOutputData.TM, UpdateSourceTrigger=PropertyChanged}" />
+                                </syncfusion:CircularScale.Pointers>
+                            </syncfusion:CircularScale>
+                        </syncfusion:SfCircularGauge.Scales>
+                    </syncfusion:SfCircularGauge>
+                    <syncfusion:SfCircularGauge
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        Margin="40,366,40,0.5"
+                        GaugeHeaderPosition="0.4,0.85"
+                        HeaderAlignment="Custom">
+                        <syncfusion:SfCircularGauge.GaugeHeader>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="ГР - " />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="ТЦ - " />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.Pm, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    Text="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}}" />
+                            </Grid>
+                        </syncfusion:SfCircularGauge.GaugeHeader>
+                        <syncfusion:SfCircularGauge.Scales>
+                            <syncfusion:CircularScale
+                                EndValue="16"
+                                Interval="2"
+                                MinorTicksPerInterval="5"
+                                Radius="150"
+                                SmallTickLength="10"
+                                SmallTickStrokeThickness="2"
+                                TickStroke="Black">
+                                <syncfusion:CircularScale.Pointers>
+                                    <syncfusion:CircularPointer
+                                        NeedleLengthFactor="0.75"
+                                        NeedlePointerStroke="Black"
+                                        NeedlePointerType="Triangle"
+                                        PointerCapDiameter="30"
+                                        PointerCapStroke="#39B2C6"
+                                        PointerType="NeedlePointer"
+                                        Value="{Binding MainTickable.LocomotiveOutputData.Pm, UpdateSourceTrigger=PropertyChanged}" />
+                                </syncfusion:CircularScale.Pointers>
+                            </syncfusion:CircularScale>
+                            <syncfusion:CircularScale
+                                EndValue="16"
+                                Interval="2"
+                                MinorTicksPerInterval="5"
+                                Radius="150"
+                                SmallTickLength="10"
+                                SmallTickStrokeThickness="2"
+                                TickStroke="Black">
+                                <syncfusion:CircularScale.Pointers>
+                                    <syncfusion:CircularPointer
+                                        NeedleLengthFactor="0.75"
+                                        NeedlePointerStroke="Red"
+                                        NeedlePointerType="Triangle"
+                                        PointerCapDiameter="30"
+                                        PointerCapStroke="#39B2C6"
+                                        PointerType="NeedlePointer"
+                                        Value="{Binding MainTickable.LocomotiveOutputData.TC, UpdateSourceTrigger=PropertyChanged}" />
+                                </syncfusion:CircularScale.Pointers>
+                            </syncfusion:CircularScale>
+                        </syncfusion:SfCircularGauge.Scales>
+                    </syncfusion:SfCircularGauge>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <ScrollViewer
             Grid.Column="1"
             BorderBrush="Black"
             BorderThickness="1">
             <StackPanel>
+                <GroupBox Header="Настройка сцепок">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8*" />
+                            <ColumnDefinition Width="7*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            Margin="10"
+                            ToolTip="Коэффициент, влияющий на силу между сцепками в зависимости от расстояния между ними">
+                            Значение K
+                        </TextBlock>
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="10"
+                            PreviewTextInput="NumberValidationTextBox"
+                            Text="{Binding MainTickable.DynamicSettings.K, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="10"
+                            ToolTip="Коэффициент, влияющий на силу между сцепками в зависимости от разности скоростей">
+                            Значение R
+                        </TextBlock>
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10"
+                            PreviewTextInput="NumberValidationTextBox"
+                            Text="{Binding MainTickable.DynamicSettings.R, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="10"
+                            TextWrapping="Wrap"
+                            ToolTip="Максимально возможное растяжение сцепки">
+                            Макс. возможное растяж.
+                        </TextBlock>
+                        <TextBox
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="10"
+                            PreviewTextInput="NumberValidationTextBox"
+                            Text="{Binding MainTickable.DynamicSettings.MaxTensionCoupling, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="10"
+                            TextWrapping="Wrap"
+                            ToolTip="Максимально возможное сжатие сцепки">
+                            Макс. возможное сжатие
+                        </TextBlock>
+                        <TextBox
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="10"
+                            PreviewTextInput="NumberValidationTextBox"
+                            Text="{Binding MainTickable.DynamicSettings.MaxCompressionCoupling, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Margin="10"
+                            TextWrapping="Wrap"
+                            ToolTip="Величина свободного хода сцепки">
+                            Свободный ход
+                        </TextBlock>
+                        <TextBox
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Margin="10"
+                            PreviewTextInput="NumberValidationTextBox"
+                            Text="{Binding MainTickable.DynamicSettings.FreeWheelAmount, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </GroupBox>
                 <GroupBox Header="Кран 394(5)">
                     <StackPanel>
                         <Slider
@@ -511,15 +651,19 @@
                 </GroupBox>
                 <GroupBox Header="Электрика">
                     <StackPanel>
-						<CheckBox
+                        <CheckBox
                             Margin="10"
                             Content="Вкл. компрессор"
                             IsChecked="{Binding MainTickable.Compressor, Mode=Default, UpdateSourceTrigger=PropertyChanged}" />
                         <StackPanel Orientation="Horizontal">
-							<TextBlock Margin="10">Производительность компрессора</TextBlock>
-							<TextBox Margin="10" Width="110" PreviewTextInput="NumberValidationTextBox" Text="{Binding MainTickable.CompressorProductivity, UpdateSourceTrigger=PropertyChanged}"/>
-						</StackPanel>
-						
+                            <TextBlock Margin="10">Производительность компрессора</TextBlock>
+                            <TextBox
+                                Width="110"
+                                Margin="10"
+                                PreviewTextInput="NumberValidationTextBox"
+                                Text="{Binding MainTickable.CompressorProductivity, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Управление игровым циклом">
@@ -567,8 +711,8 @@
 
                     </StackPanel>
                 </GroupBox>
-            </StackPanel>
-        </Border>
 
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

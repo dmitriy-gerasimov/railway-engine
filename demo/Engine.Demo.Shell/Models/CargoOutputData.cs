@@ -11,6 +11,8 @@ namespace Engine.Demo.Shell.Models
 		public double ZR { get; set; }
 		public double Velocity { get; set; }
 		public double Distance { get; set; }
+		public double CouplingDistance { get; set; }
+		public double CouplingForce { get; set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

@@ -28,6 +28,10 @@ public:
 		double velocity;
 
 		double distance;
+
+		double couplingDistance;
+
+		double couplingForce;
 	};
 
 	struct LocomotivePhysicsInputData
@@ -66,6 +70,10 @@ public:
 		double velocity;
 
 		double distance;
+
+		double couplingDistance;
+
+		double couplingForce;
 	};
 
 	struct CargoPhysicsInputData
@@ -73,6 +81,15 @@ public:
 		double brakeForceFactor;
 	};
 	
+	struct DynamicData
+	{
+		double K;
+		double R;
+		double MaxTensionCoupling;
+		double MaxCompressionCoupling;
+		double FreeWheelAmount;
+	};
+
 	World(World const& a_world) = delete;
 	auto operator= (World const& a_world) -> World& = delete;
 
@@ -111,7 +128,11 @@ public:
 
 	auto setConnectedValve(size_t a_id, bool a_value) -> void;
 	
+	auto setDynamicData(DynamicData const& a_dynamicData) -> void;
+
 private:
+	static double const Epsilon;
+
 	auto createLocomotive(ArcLocation& a_location) -> RailedVehicle*;
 
 	auto createCargo(ArcLocation& a_location) -> RailedVehicle*;
@@ -127,4 +148,8 @@ private:
 	Graph graph;
 
 	std::vector<std::unique_ptr<RailedVehicle>> railedVehicles;
+
+	double maxTensionCoupling;
+
+	double maxCompressionCoupling;
 };

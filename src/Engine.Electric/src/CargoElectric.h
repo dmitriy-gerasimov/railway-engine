@@ -22,4 +22,9 @@ public:
 	auto getTractionForce() const -> double override;
 
 	auto getBrakeForce() const -> double override;
+
+	auto setVelocity(double a_velocity) -> void override;
+
+private:
+	double velocity;
 };

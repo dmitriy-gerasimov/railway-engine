@@ -17,6 +17,7 @@ public:
 	auto operator= (RailedVehicle&& a_railedVehicle) -> RailedVehicle& = delete;
 
 	RailedVehicle(
+		size_t a_number,
 		ArcLocation a_front,
 		ArcLocation a_back,
 		std::unique_ptr<Dynamic>&& a_dynamic,
@@ -24,11 +25,13 @@ public:
 		std::unique_ptr<Electric>&& a_electric
 	);
 
-	~RailedVehicle() = default;
+	~RailedVehicle();
 
 	auto update(double a_deltaSeconds) -> void;
 
 	auto move() -> void;
+
+	auto move(double offset) -> void;
 
 	auto getGradient() const -> double;
 
@@ -40,9 +43,10 @@ public:
 
 	auto getElectric() const -> Electric*;
 
+	auto getNumber() const -> size_t;
+
 private:
-	auto updateCouplings() -> void;
-	
+
 	ArcLocation front;
 
 	ArcLocation back;
@@ -52,4 +56,6 @@ private:
 	std::unique_ptr<Pneumatic> pneumatic;
 
 	std::unique_ptr<Electric> electric;
+
+	size_t number;
 };

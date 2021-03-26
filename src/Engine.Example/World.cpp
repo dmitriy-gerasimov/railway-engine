@@ -1,4 +1,4 @@
-#include "World.h"
+﻿#include "World.h"
 
 #include "Engine.Graph/src/RailedVehicle.h"
 #include "Engine.Graph/src/Arc.h"
@@ -14,34 +14,75 @@
 
 #include <memory>
 
-World::World() = default;
+double const World::Epsilon = 0.000'001;
+
+World::World()
+	: maxTensionCoupling(0.06)
+	, maxCompressionCoupling(-0.06)
+{
+}
 
 World::~World() = default;
 
 auto World::update(double a_deltaSeconds) -> void
 {
-	for (auto& railedVehicle : this->railedVehicles)
+	for (size_t i = 0; i < railedVehicles.size(); i++)
 	{
-		railedVehicle->update(a_deltaSeconds);
+		railedVehicles[i]->update(a_deltaSeconds);
 	}
 
-	for (auto& railedVehicle : this->railedVehicles)
+	for (size_t i = 0; i < railedVehicles.size(); i++)
 	{
-		railedVehicle->move();
+		railedVehicles[i]->move();
+	}
+
+	for (size_t i = 1; i < railedVehicles.size(); i++)
+	{
+		double const distance1 = railedVehicles[i]->getDynamic()->getFrontCoupling()->getDistanceToConnectedCoupling();
+
+		Coupling const* coupling = railedVehicles[i]->getDynamic()->getFrontCoupling();
+
+		double const distanceToConnectedCoupling = coupling->getDistanceToConnectedCoupling();
+
+		if (distanceToConnectedCoupling > maxTensionCoupling)
+		{
+			railedVehicles[i]->move(distanceToConnectedCoupling - maxTensionCoupling + Epsilon);
+		}
+		else if (distanceToConnectedCoupling < maxCompressionCoupling)
+		{
+			railedVehicles[i]->move(distanceToConnectedCoupling - maxCompressionCoupling - Epsilon);
+		}
+
+		double const newDistanceToConnectedCoupling = coupling->getDistanceToConnectedCoupling();
+
+		if (newDistanceToConnectedCoupling > maxTensionCoupling || newDistanceToConnectedCoupling < maxCompressionCoupling)
+		{
+			throw std::exception();
+		}
 	}
 }
 
 auto World::createLocomotive(ArcLocation& a_location) -> RailedVehicle*
 {
+	// длина вагона
 	double const locomotiveLength(22.0);
+
+	// масса вагона
 	double const locomotiveMass(120'000.0);
+	// double const locomotiveMass(33'000.0);
+
+	// расстояние от тележки до торца вагона
+	double const railroadTruckOffset(2.0);
 
 	ArcLocation front(a_location);
+	front.move(-railroadTruckOffset);
 	
 	ArcLocation back(a_location);
 	back.move(-locomotiveLength);
+	back.move(railroadTruckOffset);
 
 	auto railedVehicle = std::make_unique<RailedVehicle>(
+		railedVehicles.size(),
 		front,
 		back,
 		std::make_unique<Dynamic>(locomotiveMass, locomotiveLength),
@@ -56,21 +97,30 @@ auto World::createLocomotive(ArcLocation& a_location) -> RailedVehicle*
 
 auto World::createCargo(ArcLocation& a_location) -> RailedVehicle*
 {
+	// длина вагона
 	double const cargoLength(22.0);
-	double const cargoMass(120'000.0);
+
+	// масса вагона
+	double const cargoMass(33'000.0);
+	
+	// расстояние от тележки до торца вагона
+	double const railroadTruckOffset(2.0);
 
 	ArcLocation front(a_location);
+	front.move(-railroadTruckOffset);
 
 	ArcLocation back(a_location);
 	back.move(-cargoLength);
+	back.move(railroadTruckOffset);
 
 	auto railedVehicle = std::make_unique<RailedVehicle>(
+		railedVehicles.size(),
 		front,
 		back,
 		std::make_unique<Dynamic>(cargoMass, cargoLength),
 		std::make_unique<CargoPneumatics>(),
 		std::make_unique<CargoElectric>()
-		);
+	);
 
 	railedVehicles.push_back(std::move(railedVehicle));
 
@@ -81,24 +131,24 @@ auto World::init(size_t a_railedVehiclesCount) -> void
 {
 	Arc* arc = graph.createArc({
 		Vector3D(0.0, 0.0, 0.0),
-		Vector3D(1000.0, 0.0, 0.0),
-		Vector3D(1000.0, 1000.0, 0.0),
-		Vector3D(0.0, 1000.0, 0.0),
-		Vector3D(0.0, 0.0, 0.0)
+		Vector3D(10'000.0, 0.0, 0.0),
+		Vector3D(11'000.0, 0.0, 25.0),
+		Vector3D(12'000.0, 0.0, 0.0),
+		Vector3D(1'000'000.0, 0.0, -10'000.0)
 	});
 
 	Node* node = graph.createNode();
 	node->setLeftConnector(arc->getBegin());
 	node->setMainConnector(arc->getEnd());
 
-	ArcLocation location(arc->getBegin(), 900.0, true);
+	ArcLocation location(arc->getBegin(), 9'000.0, true);
 
 	auto* currentVehicle = createLocomotive(location);
 	currentVehicle->getPneumatic()->setFrontValveIsOpened(false);
 
 	for (size_t i = 0; i < a_railedVehiclesCount; i++)
 	{
-		location.move(2 * -currentVehicle->getDynamic()->getLength());
+		location.move(-currentVehicle->getDynamic()->getLength());
 		
 		auto* newVehicle = createCargo(location);
 
@@ -106,11 +156,11 @@ auto World::init(size_t a_railedVehiclesCount) -> void
 
 		auto* newVehiclePneumatic = newVehicle->getPneumatic();
 
-		// �������� �������������� ����������
+		// пневматическое соединение между вагонами
 		currentVehiclePneumatic->getBackPneumaticConnector()->setOtherConnector(newVehiclePneumatic->getFrontPneumaticConnector());
 		newVehiclePneumatic->getFrontPneumaticConnector()->setOtherConnector(currentVehiclePneumatic->getBackPneumaticConnector());
 
-		// ���������� ��������� �������
+		// открытие концевых кранов
 		currentVehiclePneumatic->setIsBackTmPipeConnected(true);
 		newVehiclePneumatic->setIsFrontTmPipeConnected(true);
 
@@ -118,13 +168,14 @@ auto World::init(size_t a_railedVehiclesCount) -> void
 
 		auto* newVehicleDynamic = newVehicle->getDynamic();
 
-		// ������ ������� 
+		// соединение сцепок между вагонами
 		currentVehicleDynamic->getBackCoupling()->setConnectedCoupling(newVehicleDynamic->getFrontCoupling());
 		newVehicleDynamic->getFrontCoupling()->setConnectedCoupling(currentVehicleDynamic->getBackCoupling());
 
 		currentVehicle = newVehicle;
 	}
 
+	// закрытие концевого крана в хвосте состава
 	currentVehicle->getPneumatic()->setBackValveIsOpened(false);
 }
 
@@ -152,7 +203,8 @@ auto World::getLocomotivePhysicsOutputData(size_t a_id) const -> LocomotivePhysi
 
 	data.pmPressure = locomotivePneumatics->getPMPressure();
 
-	data.tmPressure = locomotivePneumatics->getTMPressure();
+	// data.tmPressure = locomotivePneumatics->getTMPressure();
+	data.tmPressure = locomotivePneumatics->getTMBeginPressure();
 
 	data.urPressure = locomotivePneumatics->getURPressure();
 
@@ -170,7 +222,14 @@ auto World::getLocomotivePhysicsOutputData(size_t a_id) const -> LocomotivePhysi
 
 	data.velocity = dynamic->getVelocityKmPH();
 
-	data.distance = dynamic->getDistance();
+	// data.distance = dynamic->getDistance();
+	data.distance = dynamic->getFrontCoupling()->getWorldLocation().getX();
+
+	// расстояние до соседней сцепки в миллиметрах
+	data.couplingDistance = dynamic->getFrontCoupling()->getDistanceToConnectedCoupling() * 1000.0;
+
+	// усилие на сцепке в кН
+	data.couplingForce = dynamic->getFrontCoupling()->getForce() / 1000.0;
 
 	return data;
 }
@@ -209,8 +268,6 @@ auto World::setLocomotivePhysicsInputData(size_t a_id, LocomotivePhysicsInputDat
 
 	locomotivePneumatics->setReducer(a_data.reducer);
 
-	locomotivePneumatics->setBrakeForceFactor(a_data.brakeForceFactor);
-	
 	locomotivePneumatics->setCombinedTapPosition(a_data.combinedTapPosition);
 
 	locomotivePneumatics->setCompressorProductivity(a_data.compressorProductivity);
@@ -265,13 +322,20 @@ auto World::getCargoPhysicsOutputData(size_t a_id) const -> CargoPhysicsOutputDa
 	}
 
 	data.velocity = dynamic->getVelocityKmPH();
+	
+	// data.distance = dynamic->getDistance();
+	data.distance = dynamic->getFrontCoupling()->getWorldLocation().getX();
 
-	data.distance = dynamic->getDistance();
+	// расстояние до соседней сцепки в миллиметрах
+	data.couplingDistance = dynamic->getFrontCoupling()->getDistanceToConnectedCoupling() * 1000.0;
+
+	// усилие на сцепке в кН
+	data.couplingForce = dynamic->getFrontCoupling()->getForce() / 1000.0;
 	
 	return data;
 }
 
-auto World::setCargoPhysicsInputData(size_t a_id, CargoPhysicsInputData const& a_data) const -> void
+auto World::setCargoPhysicsInputData(size_t a_id, CargoPhysicsInputData const& /*a_data*/) const -> void
 {
 	RailedVehicle const* railedVehicle(findRailedVehicle(a_id));
 	if (railedVehicle == nullptr)
@@ -290,8 +354,6 @@ auto World::setCargoPhysicsInputData(size_t a_id, CargoPhysicsInputData const& a
 	{
 		throw std::exception();
 	}
-
-	cargoPneumatics->setBrakeForceFactor(a_data.brakeForceFactor);
 }
 
 auto World::getRailedVehiclesCount() const -> size_t
@@ -344,6 +406,17 @@ auto World::setConnectedValve(size_t a_id, bool a_value) -> void
 	}
 
 	pneumatics->setIsBackTmPipeConnected(a_value);
+}
+
+auto World::setDynamicData(DynamicData const& a_dynamicData) -> void
+{
+	maxTensionCoupling = a_dynamicData.MaxTensionCoupling;
+	maxCompressionCoupling = a_dynamicData.MaxCompressionCoupling;
+	
+	for (auto& vehicle : railedVehicles)
+	{
+		vehicle->getDynamic()->setCouplingParameters(a_dynamicData.K, a_dynamicData.R, a_dynamicData.FreeWheelAmount);
+	}
 }
 
 auto World::findRailedVehicle(size_t a_id) -> RailedVehicle*

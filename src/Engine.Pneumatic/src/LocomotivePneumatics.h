@@ -34,6 +34,8 @@ public:
 
 	auto getTCPressure() const -> double;
 
+	auto getTMBeginPressure() const -> double;
+
 	auto setTap395Position(int a_position) -> void;
 
 	auto setTap254Position(int a_position) -> void;
@@ -48,7 +50,7 @@ public:
 
 	auto setCombinedTapPosition(int a_combinedTapPosition) -> void;
 
-	auto setVelocity(double a_velocity) -> void;
+	auto setVelocity(double a_velocity) -> void override;
 
 	auto getBrakeForceFactor() const -> double;
 
@@ -82,6 +84,8 @@ private:
 	void dpMVT(double a_deltaSeconds);
 
 	void dpTC(double a_deltaSeconds);
+	
+	void dpTMBegin(double a_deltaSeconds);
 
 	// главный резервуар
 	double Vgr,  pgr,  pgr0;
@@ -95,6 +99,8 @@ private:
 	double Vmvt, pmvt, pmvt0;
 	// тормозной цилиндр
 	double Vtc,  ptc,  ptc0;
+	// начало тормозной магистрали
+	double VtmBegin, ptmBegin, ptmBegin0;
 
 	// переменные с названиями вида a_x_y: 1 - если открыто соединение  между резервуарами x и y, иначе - 0
 	// gr - главный резервуар
@@ -103,10 +109,10 @@ private:
 	// atm - атмосфера
 	// mvt - магистраль вспомогательного тормоза
 	// tc -  тормозной цилиндр
-	int		a_gr_pm, a_tm_atm_leak, a_mvt_tc;
+	int		a_gr_pm, a_tm_atm_leak, a_mvt_tc, a_tmBegin_tm;
 
 	// переменные с названиями вида r_x_y: коэффициент, влияющий на скорость перетекания воздуха между резервуарами x и y
-	double	r_gr_pm, r_tm_atm_leak, r_mvt_tc;
+	double	r_gr_pm, r_tm_atm_leak, r_mvt_tc, r_tmBegin_tm;
 
 	Tap254 tap254;
 

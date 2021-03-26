@@ -7,6 +7,7 @@ class Dynamic;
 class Coupling
 {
 public:
+	
 	Coupling(Coupling const& a_coupling) = delete;
 	auto operator= (Coupling const& a_coupling) -> Coupling& = delete;
 
@@ -17,9 +18,9 @@ public:
 
 	~Coupling();
 
-	auto getConnectedCoupling() const -> Coupling const*;
+	auto getConnectedCoupling() const -> Coupling*;
 
-	auto setConnectedCoupling(Coupling const* a_coupling) -> void;
+	auto setConnectedCoupling(Coupling* a_coupling) -> void;
 
 	auto getK() const -> double;
 
@@ -45,20 +46,32 @@ public:
 
 	auto setVelocity(double a_velocity) -> void;
 
+	auto getMass() -> const double;
+
+	auto setMass(double a_mass) -> void;
+
 	auto getIsFront() const -> bool;
 
 	auto getIsBack() const -> bool;
 
 	auto update(double a_deltaSeconds) -> void;
-	
+
+	auto getDistanceToConnectedCoupling() const -> double;
+
+	auto setCouplingParameters(double k, double r, double freeWheelAmount) -> void;
+
 private:	
-	Coupling const* connectedCoupling;
+	static double const Epsilon;
+
+	Coupling* connectedCoupling;
 
 	// расстояние между сцепками в момент сцепления
 	double initialDistanceToConnectedCoupling;
 
+	// коэффициент, влияющий на силу между сцепками в зависимости от расстояния между ними
 	double k;
 
+	// коэффициент, влияющий на силу между сцепками в зависимости от разности скоростей
 	double r;
 
 	// true - если сцепка открыта (может расцепиться)
@@ -73,6 +86,8 @@ private:
 	// скорость вагона
 	double velocity;
 
+	double mass;
+
 	// true - если автосцепка передняя, иначе - задняя
 	bool isFront;
 
@@ -84,4 +99,8 @@ private:
 
 	// скорость соседнего вагона
 	double neighborVelocity;
+
+	// велечина свободного хода сцепки (есои расстояние между сцепками находится в интервале [-zeroThreshold; zeroThreshold],
+	// то усилие на сцепках не возникает)
+	double zeroThreshold;
 };

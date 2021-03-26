@@ -7,40 +7,57 @@ namespace Engine
 	public ref class WorldProxy sealed
 	{
 	public:
-		ref class LocomotivePhysicsOutputData
+		ref struct LocomotivePhysicsInputData
 		{
 		public:
-			double tmPressure;
-
-			double pmPressure;
-
-			double tcPressure;
-
-			double urPressure;
-
-			double kvvPressure;
-
-			double zrPressure;
-			
-			double velocity;
-			
-			double distance;
+			int tap395Position;
+			int tap254Position;
+			bool isCompressorWorking;
+			bool epkKey;
+			bool disconnectUnit;
+			double reducer;
+			bool epkSignal;
+			int controllerPosition;
+			int combinedTapPosition;
+			double compressorProductivity;
 		};
 
-		ref class CargoPhysicsOutputData
+		ref struct LocomotivePhysicsOutputData
 		{
 		public:
 			double tmPressure;
-
+			double pmPressure;
 			double tcPressure;
-
+			double urPressure;
+			double kvvPressure;
 			double zrPressure;
-			
 			double velocity;
-			
 			double distance;
+			double couplingDistance;
+			double couplingForce;
+		};
+
+		ref struct CargoPhysicsOutputData
+		{
+		public:
+			double tmPressure;
+			double tcPressure;
+			double zrPressure;
+			double velocity;
+			double distance;
+			double couplingDistance;
+			double couplingForce;
 		};
 		
+		ref struct DynamicData
+		{
+			double K;
+			double R;
+			double MaxTensionCoupling;
+			double MaxCompressionCoupling;
+			double FreeWheelAmount;
+		};
+
 		WorldProxy();
 
 		~WorldProxy();
@@ -51,18 +68,9 @@ namespace Engine
 
 		auto getLocomotivePhysicsOutputData() -> LocomotivePhysicsOutputData^;
 
-		auto setLocomotivePhysicsInputData(
-			int tap395Position,
-			int tap254Position,
-			bool isCompressorWorking,
-			bool epkKey,
-			bool discUnit,
-			double reducer,
-			bool epkSignal,
-			int controllerPosition,
-			int combinedTapPosition,
-			double compressorProductivity
-		) -> void;
+		auto setLocomotivePhysicsInputData(LocomotivePhysicsInputData^ inputData) -> void;
+
+		auto setDynamicData(DynamicData^ inputData) -> void;
 
 		auto getCargoPhysicsOutputData(unsigned int id) -> CargoPhysicsOutputData^;
 
@@ -82,8 +90,7 @@ namespace Engine
 
 		auto setVRValveIsOpened(unsigned int a_id, bool a_value) -> void;
 		
-		auto setConnectedValve(unsigned a_id, bool a_value) -> void;
-
+		auto setConnectedValve(unsigned int a_id, bool a_value) -> void;
 	private:
 		World* world;
 		
@@ -95,5 +102,6 @@ namespace Engine
 
 		World::CargoPhysicsInputData* cargoInputData;
 
+		World::DynamicData* dynamic_data;
 	};
 }

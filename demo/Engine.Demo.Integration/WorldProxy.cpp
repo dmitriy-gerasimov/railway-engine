@@ -11,6 +11,8 @@ Engine::WorldProxy::WorldProxy()
 	cargo_output_data = gcnew CargoPhysicsOutputData();
 
 	cargoInputData = new World::CargoPhysicsInputData();
+
+	dynamic_data = new World::DynamicData();
 }
 
 Engine::WorldProxy::~WorldProxy()
@@ -45,35 +47,37 @@ auto Engine::WorldProxy::getLocomotivePhysicsOutputData() -> LocomotivePhysicsOu
 
 	locomotive_output_data->velocity = data.velocity;
 	locomotive_output_data->distance = data.distance;
+	locomotive_output_data->couplingDistance = data.couplingDistance;
+	locomotive_output_data->couplingForce = data.couplingForce;
 	
 	return locomotive_output_data;
 }
 
-auto Engine::WorldProxy::setLocomotivePhysicsInputData(
-	int tap395Position,
-	int tap254Position,
-	bool isCompressorWorking,
-	bool epkKey,
-	bool disconnectUnit,
-	double reducer,
-	bool epkSignal,
-	int controllerPosition,
-	int combinedTapPosition, 
-	double compressorProductivity
-) -> void
+auto Engine::WorldProxy::setLocomotivePhysicsInputData(LocomotivePhysicsInputData^ inputData) -> void
 {	
-	locomotiveInputData->tap395Position = tap395Position;
-	locomotiveInputData->tap254Position = tap254Position;
-	locomotiveInputData->isCompressorWorking = isCompressorWorking;
-	locomotiveInputData->disconnectUnit = disconnectUnit;
-	locomotiveInputData->reducer = reducer;
-	locomotiveInputData->epkKey = epkKey;
-	locomotiveInputData->epkSignal = epkSignal;
-	locomotiveInputData->controllerPosition = controllerPosition;
-	locomotiveInputData->combinedTapPosition = combinedTapPosition;
-	locomotiveInputData->compressorProductivity = compressorProductivity;
+	locomotiveInputData->tap395Position = inputData->tap395Position;
+	locomotiveInputData->tap254Position = inputData->tap254Position;
+	locomotiveInputData->isCompressorWorking = inputData->isCompressorWorking;
+	locomotiveInputData->disconnectUnit = inputData->disconnectUnit;
+	locomotiveInputData->reducer = inputData->reducer;
+	locomotiveInputData->epkKey = inputData->epkKey;
+	locomotiveInputData->epkSignal = inputData->epkSignal;
+	locomotiveInputData->controllerPosition = inputData->controllerPosition;
+	locomotiveInputData->combinedTapPosition = inputData->combinedTapPosition;
+	locomotiveInputData->compressorProductivity = inputData->compressorProductivity;
 
 	world->setLocomotivePhysicsInputData(0, *locomotiveInputData);
+}
+
+auto Engine::WorldProxy::setDynamicData(DynamicData^ inputData) -> void
+{
+	dynamic_data->K = inputData->K;
+	dynamic_data->R= inputData->R;
+	dynamic_data->MaxTensionCoupling = inputData->MaxTensionCoupling;
+	dynamic_data->MaxCompressionCoupling = inputData->MaxCompressionCoupling;
+	dynamic_data->FreeWheelAmount = inputData->FreeWheelAmount;
+	
+	world->setDynamicData(*dynamic_data);
 }
 
 auto Engine::WorldProxy::getCargoPhysicsOutputData(unsigned int id) -> CargoPhysicsOutputData^
@@ -86,6 +90,8 @@ auto Engine::WorldProxy::getCargoPhysicsOutputData(unsigned int id) -> CargoPhys
 
 	cargo_output_data->velocity = data.velocity;
 	cargo_output_data->distance = data.distance;
+	cargo_output_data->couplingDistance = data.couplingDistance;
+	cargo_output_data->couplingForce = data.couplingForce;
 
 	return cargo_output_data;
 }

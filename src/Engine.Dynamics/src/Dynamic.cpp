@@ -13,7 +13,8 @@ Dynamic::Dynamic(double a_mass, double a_length)
 	, backCoupling(false)
 	, mass(a_mass)
 	, acceleration(0.0)
-	, velocity(0.0)
+	, velocity(Epsilon)
+	, previousVelocity(-Epsilon)
 	, offset(0.0)
 	, tractionForce(0.0)
 	, brakeForce(0.0)
@@ -23,6 +24,8 @@ Dynamic::Dynamic(double a_mass, double a_length)
 	, distance(0.0)
 	, length(a_length)
 {
+	frontCoupling.setMass(mass);
+	backCoupling.setMass(mass);
 }
 
 auto Dynamic::getFrontCoupling() const -> Coupling const*
@@ -115,6 +118,13 @@ auto Dynamic::setBrakeForce(double a_force) -> void
 	this->brakeForce = a_force;
 }
 
+auto Dynamic::setCouplingParameters(double k, double r, double freeWheelAmount) -> void
+{
+	frontCoupling.setCouplingParameters(k, r, freeWheelAmount);
+
+	backCoupling.setCouplingParameters(k, r, freeWheelAmount);
+}
+
 auto Dynamic::getGradient() const -> double
 {
 	return this->gradient;
@@ -151,6 +161,14 @@ auto Dynamic::getFrictionForce() const -> double
 
 auto Dynamic::update(double a_deltaSeconds) -> void
 {
+	// обновления сил, приложенных к передней автосцепке
+	if (frontCoupling.hasConnectedCoupling())
+		frontCoupling.update(a_deltaSeconds);
+
+	// обновления сил, приложенных к задней автосцепке
+	if (backCoupling.hasConnectedCoupling())
+		backCoupling.update(a_deltaSeconds);
+
 	// сила, возникающая на уклоне
 	double const gradientForce = -gradient * mass * G;
 
@@ -166,7 +184,7 @@ auto Dynamic::update(double a_deltaSeconds) -> void
 	// ускорение
 	acceleration = (resultTractionForce + resultBrakeForce) / mass;
 
-	double const previousVelocity = velocity;
+	previousVelocity = velocity;
 
 	// расчёт скороси
 	velocity = velocity + acceleration * a_deltaSeconds;
@@ -184,14 +202,6 @@ auto Dynamic::update(double a_deltaSeconds) -> void
 
 	// путь, пройденный с момента начала движения (для отладки)
 	distance += offset;
-
-	// обновления сил, приложенных к передней автосцепке
-	if (frontCoupling.hasConnectedCoupling())
-		frontCoupling.update(a_deltaSeconds);
-
-	// обновления сил, приложенных к задней автосцепке
-	if (backCoupling.hasConnectedCoupling())
-		backCoupling.update(a_deltaSeconds);
 }
 
 auto Dynamic::disconnectFrontCoupling() -> void
@@ -217,4 +227,5 @@ auto Dynamic::setFrictionForceFactor(double a_factor) -> void
 auto Dynamic::getDistance() const -> double
 {
 	return distance;
+	// return 1000.0 * backCoupling.getDistanceToConnectedCoupling();
 }
